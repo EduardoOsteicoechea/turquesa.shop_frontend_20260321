@@ -1,4 +1,4 @@
-name: Build and Deploy Solid App to S3
+name: Build and Deploy SvelteKit to S3
 
 on:
   push:
@@ -12,22 +12,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 1. Setup Node environment so we can build the project
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20 # Standard for modern Vite projects
-          cache: 'npm'     # Speeds up subsequent workflow runs
+          node-version: 20
+          cache: "npm"
 
-      # 2. Install dependencies (using ci for strict, clean installs)
       - name: Install dependencies
         run: npm ci
 
-      # 3. Build the Solid project (Vite automatically minifies and bundles into the 'dist' folder)
       - name: Build project
         run: npm run build
 
-      # 4. Configure AWS access
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -35,6 +31,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      # 5. Push the build to S3 
-      - name: Sync to S3 
+      # 1. Sync to S3 (SvelteKit adapter-static uses 'build/' by default)
+      - name: Sync to S3
         run: aws s3 sync build/ s3://${{ secrets.AWS_S3_BUCKET }} --delete
+
+      # 2. Tell CloudFront to clear the cache so the world sees the new version instantly
+      - name: Invalidate CloudFront
+        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
