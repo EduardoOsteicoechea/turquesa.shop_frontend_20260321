@@ -21,14 +21,7 @@ export default async (route: string) => {
             'Content-Type': 'application/json'
         }
     });
-
-    if (!response2.ok) {
-        const errorBody = await response.json().catch(() => ({}));
-        throw new Error(errorBody.message || `API Error: ${response.status}`);
-    }
-
     const data2 = await response2.json();
-
     console.log(data2);
 
     return data;
