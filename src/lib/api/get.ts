@@ -15,14 +15,5 @@ export default async (route: string) => {
 
     console.log(data);
 
-    const response2 = await fetch("https://turquesa.shop/product/images/10033.jpg", {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-    const data2 = await response2.json();
-    console.log(data2);
-
     return data;
 };
