@@ -22,12 +22,12 @@ export default async (route: string) => {
         }
     });
 
-    if (!response.ok) {
+    if (!response2.ok) {
         const errorBody = await response.json().catch(() => ({}));
         throw new Error(errorBody.message || `API Error: ${response.status}`);
     }
 
-    const data2 = await response.json();
+    const data2 = await response2.json();
 
     console.log(data2);
 
