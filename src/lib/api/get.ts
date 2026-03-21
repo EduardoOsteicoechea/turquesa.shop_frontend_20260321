@@ -11,5 +11,9 @@ export default async (route: string) => {
         throw new Error(errorBody.message || `API Error: ${response.status}`);
     }
 
-    return await response.json();
+    const data = await response.json();
+
+    console.log(data);
+
+    return data;
 };
