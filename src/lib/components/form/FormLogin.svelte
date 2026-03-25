@@ -4,8 +4,9 @@
     post,
     pageRoutes,
     isAuthenticated,
+    authState,
     type BaseApiResponse,
-  } from "../../../store";
+  } from "../../../store.svelte";
 
   $effect(() => {
     const checkAuth = async () => {
@@ -45,33 +46,41 @@
   };
 </script>
 
-<div class="overlay {isAwaitingApiResponse ? 'visible' : ''}"></div>
-<div class="outer_container column_container">
-  <div class="header">
-    <h1>Inicia Sesión</h1>
-  </div>
+{#if authState.isValidating}
 
-  <div id="email_form_input_group_container" class="form_input_group_container">
-    <label for="email_input">@</label>
-    <input bind:value={email} id="email_input" type="text" />
-  </div>
+  <div class="overlay visible"></div>
+{:else}
+  <div class="overlay {isAwaitingApiResponse ? 'visible' : ''}"></div>
+  <div class="outer_container column_container">
+    <div class="header">
+      <h1>Inicia Sesión</h1>
+    </div>
 
-  <div
-    id="password_form_input_group_container"
-    class="form_input_group_container"
-  >
-    <label for="email_input">*</label>
-    <input bind:value={password} id="password_input" type="password" />
-  </div>
+    <div
+      id="email_form_input_group_container"
+      class="form_input_group_container"
+    >
+      <label for="email_input">@</label>
+      <input bind:value={email} id="email_input" type="text" />
+    </div>
 
-  <button
-    class="submit_button"
-    disabled={isAwaitingApiResponse}
-    onclick={handleSubmit}
-  >
-    Acceder
-  </button>
-</div>
+    <div
+      id="password_form_input_group_container"
+      class="form_input_group_container"
+    >
+      <label for="email_input">*</label>
+      <input bind:value={password} id="password_input" type="password" />
+    </div>
+
+    <button
+      class="submit_button"
+      disabled={isAwaitingApiResponse}
+      onclick={handleSubmit}
+    >
+      Acceder
+    </button>
+  </div>
+{/if}
 
 <style>
   .outer_container {

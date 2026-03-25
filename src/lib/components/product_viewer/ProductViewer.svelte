@@ -1,6 +1,6 @@
 <script lang="ts">
   import get from "$lib/api/get";
-  import { pageRoutes } from "../../../store";
+  import { pageRoutes } from "../../../store.svelte";
 
   interface Product {
     name: string;
