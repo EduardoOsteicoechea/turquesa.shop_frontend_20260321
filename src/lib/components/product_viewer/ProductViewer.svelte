@@ -1,9 +1,11 @@
 <script lang="ts">
   import get from "$lib/api/get";
+  import { page_routes } from "../../../store";
 
   interface Product {
     name: string;
     price: number;
+    image_name: string;
   }
 
   interface Products {
@@ -24,9 +26,23 @@
       <div class="card">
         <h3>{item.name}</h3>
         <span>{item.price} USD</span>
+        <div class="product_image">
+          <img src="{page_routes.product_images_url}{item.image_name}" 
+          height="100%"
+          alt="{item.name} Image"
+           />
+        </div>
       </div>
     {/each}
   </section>
 {:catch error}
   <p class="error">Error: {error.message}</p>
 {/await}
+
+<style>
+  .product_image {
+    height: 200px;
+    width: 200px;
+    overflow: hidden;
+  }
+</style>
