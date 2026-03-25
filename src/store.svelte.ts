@@ -2,6 +2,14 @@ import { goto } from "$app/navigation";
 
 const baseRoute = "https://turquesa.shop/";
 
+export const pageRoutes = {
+   product_images_url: `${baseRoute}product/images`,
+   login: `${baseRoute}api/login`,
+   isAuthenticated: `${baseRoute}api/is-authenticated`,
+   adminDashboard: `/admin-dashboard`,
+   home: `/`,
+}
+
 export const authState = $state({
    isValidating: false,
 });
@@ -25,14 +33,6 @@ export function useAuthRedirect(
 
       checkAuth();
    });
-}
-
-export const pageRoutes = {
-   product_images_url: `${baseRoute}product/images`,
-   login: `${baseRoute}api/login`,
-   isAuthenticated: `${baseRoute}api/is-authenticated`,
-   adminDashboard: `/admin-dashboard`,
-   home: ``,
 }
 
 export interface BaseApiResponse {
