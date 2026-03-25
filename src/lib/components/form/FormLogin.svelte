@@ -3,21 +3,8 @@
   import {
     post,
     pageRoutes,
-    isAuthenticated,
-    authState,
     type BaseApiResponse,
   } from "../../../store.svelte";
-
-  $effect(() => {
-    const checkAuth = async () => {
-      const isAuth = await isAuthenticated();
-      if (isAuth) {
-        goto(pageRoutes.adminDashboard);
-      }
-    };
-
-    checkAuth();
-  });
 
   let email = $state("");
   let password = $state("");
@@ -46,41 +33,33 @@
   };
 </script>
 
-{#if authState.isValidating}
-
-  <div class="overlay visible"></div>
-{:else}
-  <div class="overlay {isAwaitingApiResponse ? 'visible' : ''}"></div>
-  <div class="outer_container column_container">
-    <div class="header">
-      <h1>Inicia Sesión</h1>
-    </div>
-
-    <div
-      id="email_form_input_group_container"
-      class="form_input_group_container"
-    >
-      <label for="email_input">@</label>
-      <input bind:value={email} id="email_input" type="text" />
-    </div>
-
-    <div
-      id="password_form_input_group_container"
-      class="form_input_group_container"
-    >
-      <label for="email_input">*</label>
-      <input bind:value={password} id="password_input" type="password" />
-    </div>
-
-    <button
-      class="submit_button"
-      disabled={isAwaitingApiResponse}
-      onclick={handleSubmit}
-    >
-      Acceder
-    </button>
+<div class="overlay {isAwaitingApiResponse ? 'visible' : ''}"></div>
+<div class="outer_container column_container">
+  <div class="header">
+    <h1>Inicia Sesión</h1>
   </div>
-{/if}
+
+  <div id="email_form_input_group_container" class="form_input_group_container">
+    <label for="email_input">@</label>
+    <input bind:value={email} id="email_input" type="text" />
+  </div>
+
+  <div
+    id="password_form_input_group_container"
+    class="form_input_group_container"
+  >
+    <label for="email_input">*</label>
+    <input bind:value={password} id="password_input" type="password" />
+  </div>
+
+  <button
+    class="submit_button"
+    disabled={isAwaitingApiResponse}
+    onclick={handleSubmit}
+  >
+    Acceder
+  </button>
+</div>
 
 <style>
   .outer_container {
