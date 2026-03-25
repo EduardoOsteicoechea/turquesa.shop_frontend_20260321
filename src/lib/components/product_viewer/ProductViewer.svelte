@@ -1,6 +1,6 @@
 <script lang="ts">
   import get from "$lib/api/get";
-  import { page_routes } from "../../../store";
+  import { pageRoutes } from "../../../store";
 
   interface Product {
     name: string;
@@ -27,7 +27,7 @@
         <h3>{item.name}</h3>
         <span>{item.price} USD</span>
         <div class="product_image">
-          <img src="{page_routes.product_images_url}{item.image_name}" 
+          <img src="{pageRoutes.product_images_url}{item.image_name}" 
           height="100%"
           alt="{item.name} Image"
            />
