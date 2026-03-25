@@ -1,18 +1,9 @@
 <script>
   import { goto } from "$app/navigation";
   import FormLogin from "$lib/components/form/FormLogin.svelte";
-  import { authState, isAuthenticated, pageRoutes } from "../../store.svelte";
+  import { authState, isAuthenticated, pageRoutes, useAuthRedirect } from "../../store.svelte";
 
-  $effect(() => {
-    const checkAuth = async () => {
-      const isAuth = await isAuthenticated();
-      if (isAuth) {
-        goto(pageRoutes.adminDashboard);
-      }
-    };
-
-    checkAuth();
-  });
+  useAuthRedirect(pageRoutes.adminDashboard, pageRoutes.login, true);
 </script>
 
 {#if authState.isValidating}{:else}

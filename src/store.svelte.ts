@@ -1,15 +1,38 @@
+import { goto } from "$app/navigation";
 
 const baseRoute = "https://turquesa.shop/";
 
 export const authState = $state({
-  isValidating: false,
+   isValidating: false,
 });
+
+export function useAuthRedirect(
+   route: string = pageRoutes.adminDashboard, 
+   fallbackRoute: string = pageRoutes.home, 
+   avoidRedirectionOnUnauthenticated: boolean = false
+) {
+   $effect(() => {
+      const checkAuth = async () => {
+         const isAuth = await isAuthenticated();
+         if (isAuth) {
+            goto(route);
+         } else {
+            if (!avoidRedirectionOnUnauthenticated) {
+               goto(fallbackRoute);
+            }
+         }
+      };
+
+      checkAuth();
+   });
+}
 
 export const pageRoutes = {
    product_images_url: `${baseRoute}product/images`,
    login: `${baseRoute}api/login`,
    isAuthenticated: `${baseRoute}api/is-authenticated`,
    adminDashboard: `/admin-dashboard`,
+   home: ``,
 }
 
 export interface BaseApiResponse {
