@@ -1,45 +1,95 @@
 <script lang="ts">
-  // 1. We store objects now instead of strings. 
+  import { pageRoutes, stringifyFormData } from "../../../store.svelte";
+
+  let name = $state("");
+  let description = $state("");
+  let priceInBolivares = $state("");
+  let priceInPhysicalDollars = $state(0);
+  let units = $state(0);
+  let showInGallery = $state(false);
+
+  // 1. We store objects now instead of strings.
   // Each input gets a unique ID, a place for the File, and a preview URL.
   let imagesToLoad = $state([
-    { id: crypto.randomUUID(), file: null, previewUrl: "" }
+    { id: crypto.randomUUID(), file: null, previewUrl: "" },
   ]);
 
-  // 2. $derived automatically recalculates. 
+  // 2. $derived automatically recalculates.
   // It checks if EVERY item in the array has a file attached.
-  let canAddNew = $derived(imagesToLoad.every(img => img.file !== null));
+  let canAddNew = $derived(imagesToLoad.every((img) => img.file !== null));
 
   const handleAddImagenToLoad = () => {
     // Only allow adding if all current inputs have files
     if (canAddNew) {
-      imagesToLoad.push({ id: crypto.randomUUID(), file: null, previewUrl: "" });
+      imagesToLoad.push({
+        id: crypto.randomUUID(),
+        file: null,
+        previewUrl: "",
+      });
     }
   };
 
   // 3. We pass the exact ID to the remove function
-  const handleRemoveImagenToLoad = (idToRemove:string) => {
+  const handleRemoveImagenToLoad = (idToRemove: string) => {
     // Best practice: free up browser memory by revoking the old URL
-    const item = imagesToLoad.find(img => img.id === idToRemove);
+    const item = imagesToLoad.find((img) => img.id === idToRemove);
     if (item && item.previewUrl) {
       URL.revokeObjectURL(item.previewUrl);
     }
 
     // Filter out the one we want to delete
-    imagesToLoad = imagesToLoad.filter(img => img.id !== idToRemove);
+    imagesToLoad = imagesToLoad.filter((img) => img.id !== idToRemove);
   };
 
   // 4. Handle the file input change
-  const handleFileChange = (event:any, id:string) => {
+  const handleFileChange = (event: any, id: string) => {
     const file = event.target.files[0];
     if (!file) return;
 
     // Find the specific image object in our state
-    const index = imagesToLoad.findIndex(img => img.id === id);
+    const index = imagesToLoad.findIndex((img) => img.id === id);
     if (index !== -1) {
       // Create a temporary local URL so the <img> tag can display it
       imagesToLoad[index].file = file;
       imagesToLoad[index].previewUrl = URL.createObjectURL(file);
     }
+  };
+
+  let handleSubmit = async () => {
+    const formData = new FormData();
+
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("priceInBolivares", priceInBolivares.toString());
+    formData.append(
+      "priceInPhysicalDollars",
+      priceInPhysicalDollars.toString(),
+    );
+    formData.append("units", units.toString());
+    formData.append("showInGallery", showInGallery.toString());
+
+    imagesToLoad.forEach((img) => {
+      if (img.file) {
+        formData.append("images", img.file);
+      }
+    });
+
+    alert(stringifyFormData(formData));
+
+    //  try {
+    //    const response = await fetch(pageRoutes.uploadProduct, {
+    //      method: 'POST',
+    //      body: formData
+    //    });
+
+    //    if (response.ok) {
+    //      alert("¡Producto guardado exitosamente!");
+    //    } else {
+    //      alert("Error al guardar el producto.");
+    //    }
+    //  } catch (error) {
+    //    console.error("Error de red:", error);
+    //  }
   };
 </script>
 
@@ -48,27 +98,32 @@
 
   <div class="form_single_input_item_container">
     <label for="">Nombre</label>
-    <input type="text" />
+    <input type="text " bind:value={name} />
+  </div>
+
+  <div class="form_single_input_item_container">
+    <label for="">Descripción</label>
+    <input type="text " bind:value={description} />
   </div>
 
   <div class="form_single_input_item_container">
     <label for="">Precio en Bolívares</label>
-    <input type="number" />
+    <input type="number" bind:value={priceInBolivares} />
   </div>
 
   <div class="form_single_input_item_container">
     <label for="">Precio en dólares físicos</label>
-    <input type="number" />
+    <input type="number" bind:value={priceInPhysicalDollars} />
   </div>
 
   <div class="form_single_input_item_container">
     <label for="">Unidades</label>
-    <input type="number" />
+    <input type="number" bind:value={units} />
   </div>
 
   <div class="form_single_input_item_container">
     <label for="">Mostrar en galería</label>
-    <input type="checkbox" />
+    <input type="checkbox" bind:checked={showInGallery} />
   </div>
 
   <div>
@@ -76,29 +131,40 @@
     <div>
       <button onclick={handleAddImagenToLoad} disabled={!canAddNew}> + </button>
     </div>
-    
+
     <div class="images_to_load_container">
       {#each imagesToLoad as imageToLoad (imageToLoad.id)}
         <div class="single_image_to_load_container">
-          <div class="single_image_to_load_container_input_and_remove_button_container">
-            
-            <input 
-              type="file" 
-              accept=".webp" 
-              onchange={(e) => handleFileChange(e, imageToLoad.id)} 
+          <div
+            class="single_image_to_load_container_input_and_remove_button_container"
+          >
+            <input
+              type="file"
+              accept=".webp"
+              onchange={(e) => handleFileChange(e, imageToLoad.id)}
             />
-            
-            <button onclick={() => handleRemoveImagenToLoad(imageToLoad.id)}> - </button>
+
+            <button onclick={() => handleRemoveImagenToLoad(imageToLoad.id)}>
+              -
+            </button>
           </div>
 
           <div class="single_image_to_load_container_loaded_image_container">
             {#if imageToLoad.previewUrl}
-              <img src={imageToLoad.previewUrl} alt="Preview" style="max-width: 100px; max-height: 100px;" />
+              <img
+                src={imageToLoad.previewUrl}
+                alt="Preview"
+                style="max-width: 100px; max-height: 100px;"
+              />
             {/if}
           </div>
         </div>
       {/each}
     </div>
+  </div>
+
+  <div>
+    <button onclick={handleSubmit}>Guardar</button>
   </div>
 </div>
 

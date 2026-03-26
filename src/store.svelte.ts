@@ -8,6 +8,7 @@ export const pageRoutes = {
    isAuthenticated: `${baseRoute}api/is-authenticated`,
    adminDashboard: `/admin-dashboard`,
    home: `/`,
+   uploadProduct: `${baseRoute}api/upload-product`,
 }
 
 export const authState = $state({
@@ -15,8 +16,8 @@ export const authState = $state({
 });
 
 export function useAuthRedirect(
-   route: string = pageRoutes.adminDashboard, 
-   fallbackRoute: string = pageRoutes.home, 
+   route: string = pageRoutes.adminDashboard,
+   fallbackRoute: string = pageRoutes.home,
    avoidRedirectionOnUnauthenticated: boolean = false
 ) {
    $effect(() => {
@@ -80,3 +81,19 @@ async function request<T>(url: string, method: string, payload: any = null): Pro
 
    return data;
 }
+
+export function stringifyFormData(formData: FormData):string {
+   let formDataString = "";
+
+   for (let [key, value] of formData.entries()) {
+      if (value instanceof File) {
+         // If it's a file, format its properties nicely
+         formDataString += `${key}: File(name: "${value.name}", size: ${value.size} bytes, type: "${value.type}")\n`;
+      } else {
+         // If it's regular text/numbers, just add it directly
+         formDataString += `${key}: ${value}\n`;
+      }
+   }
+
+   return formDataString;
+};

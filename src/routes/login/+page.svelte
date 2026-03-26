@@ -1,5 +1,4 @@
 <script>
-  import { goto } from "$app/navigation";
   import FormLogin from "$lib/components/form/FormLogin.svelte";
   import { authState, isAuthenticated, pageRoutes, useAuthRedirect } from "../../store.svelte";
 
@@ -11,3 +10,10 @@
     <FormLogin />
   </div>
 {/if}
+
+<style>
+   .page{
+      align-items: flex-start;
+      padding: 30px;
+   }
+</style>
