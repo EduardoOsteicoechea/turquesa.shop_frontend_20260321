@@ -82,7 +82,7 @@ async function request<T>(url: string, method: string, payload: any = null): Pro
    return data;
 }
 
-export function stringifyFormData(formData: FormData):string {
+export function stringifyFormData(formData: FormData): string {
    let formDataString = "";
 
    for (let [key, value] of formData.entries()) {
@@ -97,3 +97,20 @@ export function stringifyFormData(formData: FormData):string {
 
    return formDataString;
 };
+
+export async function postFormData(route: string, formData: FormData, successMessage: string, errorMessage: string) {
+   try {
+      const response = await fetch(route, {
+         method: 'POST',
+         body: formData
+      });
+
+      if (response.ok) {
+         alert(successMessage);
+      } else {
+         alert(errorMessage);
+      }
+   } catch (error) {
+      console.error("Error de red:", error);
+   }
+}

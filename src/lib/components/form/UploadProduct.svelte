@@ -1,5 +1,9 @@
 <script lang="ts">
-  import { pageRoutes, stringifyFormData } from "../../../store.svelte";
+  import {
+    pageRoutes,
+    stringifyFormData,
+    postFormData,
+  } from "../../../store.svelte";
 
   let name = $state("");
   let description = $state("");
@@ -75,21 +79,14 @@
     });
 
     alert(stringifyFormData(formData));
+    alert(pageRoutes.uploadProduct);
 
-    //  try {
-    //    const response = await fetch(pageRoutes.uploadProduct, {
-    //      method: 'POST',
-    //      body: formData
-    //    });
-
-    //    if (response.ok) {
-    //      alert("¡Producto guardado exitosamente!");
-    //    } else {
-    //      alert("Error al guardar el producto.");
-    //    }
-    //  } catch (error) {
-    //    console.error("Error de red:", error);
-    //  }
+    await postFormData(
+      pageRoutes.uploadProduct,
+      formData,
+      "¡Producto guardado exitosamente!",
+      "Error al guardar el producto.",
+    );
   };
 </script>
 
