@@ -3,7 +3,7 @@ import { goto } from "$app/navigation";
 const baseRoute = "https://turquesa.shop/";
 
 export const pageRoutes = {
-   product_images_url: `${baseRoute}product/images`,
+   product_images_url: `${baseRoute}product/images/`,
    login: `${baseRoute}api/login`,
    isAuthenticated: `${baseRoute}api/is-authenticated`,
    adminDashboard: `/admin-dashboard`,
