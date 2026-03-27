@@ -4,6 +4,8 @@ const baseRoute = "https://turquesa.shop/";
 
 export const pageRoutes = {
    product_images_url: `${baseRoute}product/images/`,
+   // ADD THE DIRECT LINK TO YOUR S3 JSON FILE HERE:
+   products_json: `${baseRoute}product/images/products.json`,
    login: `${baseRoute}api/login`,
    isAuthenticated: `${baseRoute}api/is-authenticated`,
    adminDashboard: `/admin-dashboard`,
@@ -15,25 +17,33 @@ export const authState = $state({
    isValidating: false,
 });
 
-export function useAuthRedirect(
-   route: string = pageRoutes.adminDashboard,
-   fallbackRoute: string = pageRoutes.home,
-   avoidRedirectionOnUnauthenticated: boolean = false
-) {
-   $effect(() => {
-      const checkAuth = async () => {
-         const isAuth = await isAuthenticated();
-         if (isAuth) {
-            goto(route);
-         } else {
-            if (!avoidRedirectionOnUnauthenticated) {
-               goto(fallbackRoute);
-            }
-         }
-      };
+// --- TYPE DEFINITION FOR YOUR STORE ---
+export interface Product {
+   name: string;
+   price: number;
+   image_name: string;
+}
 
-      checkAuth();
-   });
+// --- NEW STATIC FETCH FUNCTION ---
+export const getStaticProducts = async (): Promise<Product[]> => {
+   try {
+      // Fetch directly from the static URL without credentials or CORS overhead
+      const response = await fetch(pageRoutes.products_json, {
+         method: "GET",
+         headers: {
+            "Content-Type": "application/json"
+         }
+      });
+      
+      if (!response.ok) throw new Error("Failed to fetch static products");
+      
+      const data = await response.json();
+      // Extract the array from the JSON structure
+      return data.product_list || [];
+   } catch (error) {
+      console.error("Error reading products.json:", error);
+      return []; // Return empty array so the UI doesn't crash on failure
+   }
 }
 
 export interface BaseApiResponse {
